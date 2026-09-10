@@ -1,3 +1,4 @@
+import sys
 from PIL import Image
 from PIL.ExifTags import TAGS, GPSTAGS
 
@@ -68,15 +69,21 @@ def print_gps_details(exif):
         print("\nGPS data present but incomplete.")
 
 if __name__ == "__main__":
-    img = get_basic_info("test.jpg")
+    if len(sys.argv) < 2:
+        print("Usage: python3 image_metadata.py <path_to_image>")
+        sys.exit(1)
+    
+    image_path = sys.argv[1]
+    
+    img = get_basic_info(image_path)
     print("\nChecking for EXIF...")
     
-    raw_exif = img.getexif()  # keep the raw object for GPS lookup
-    exif = get_exif_data(img)  # readable dict for normal tags
+    raw_exif = img.getexif()
+    exif = get_exif_data(img)
     
     print(f"EXIF dict has {len(exif)} entries")
     if exif:
         print_key_details(exif)
-        print_gps_details(raw_exif)  # pass raw_exif here, not exif
+        print_gps_details(raw_exif)
     else:
         print("Exif was empty, skipping key details.")
